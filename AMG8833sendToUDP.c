@@ -56,7 +56,6 @@ int main( int argc, char *argv[] ) {
     // カメラ本体の温度計測
     char ch, cl;
     int temp;
-    float tempf;
     // UDP
     struct sockaddr_in addr;
     int sock_descriptor;
@@ -75,13 +74,14 @@ int main( int argc, char *argv[] ) {
     //カーソルを行頭に移動
     printf( "\x1b[1;1H");
 
-   // 引数の取得と設定
+    // 引数の取得と設定
     if( argc >= 3 ) {
         for( i = 1; i < argc; i++ ) {
             sprintf( txt, "%s", argv[i] );
             if( strcmp( txt, "-ip" ) == 0  && i < argc - 1 ) {
                 // IPアドレスの変更
-                strncpy( txt, argv[i + 1], 15 );
+                strncpy( txt, argv[ i + 1 ], 24 );
+                txt[ 24 ] = 0x00;
                 if( strlen( txt ) >= 7 ) {
                     strcpy( ipAddress, txt );
                     printf( " 送信先IP = %s\n", ipAddress );
@@ -89,7 +89,8 @@ int main( int argc, char *argv[] ) {
             }
             if( strcmp( txt, "-port" ) == 0  && i < argc - 1 ) {
                 // UDPポート番号の変更
-                strncpy( txt, argv[i + 1], 6 );
+                strncpy( txt, argv[ i + 1 ], 6 );
+                txt[ 6 ] = 0x00;
                 if( strlen( txt ) >= 4 ) {
                     n = atoi( txt );
                     if( n >= 1024 && n <= 65535 ){
@@ -226,7 +227,7 @@ int main( int argc, char *argv[] ) {
     close( sock_descriptor );
 
     // i2cを閉じる
-    i2cClose(handle);
+    i2cClose( handle );
 
     // GPIOを終了する
     gpioTerminate();
